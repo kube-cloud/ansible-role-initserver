@@ -36,11 +36,12 @@
    server_user_autorized_keys: "{{ server_user_autorized_keys | default([]) }}"
    server_tcp_ports: "{{ (server_tcp_ports | default([])) + [22] }}"
    server_udp_ports: "{{ server_udp_ports | default([]) }}"
+   storage_servers: "{{ storage_servers | default([]) }}"
 
 # define Commons ubuntu facts
 - name: ({{ ansible_distribution }}) - INIT - Define Ubuntu facts
   set_fact:
-   _server_packages: "{{ (server_packages | default([])) + ['openssl', 'ufw', 'ntp'] }}"
+   _server_packages: "{{ (server_packages | default([])) + ['openssl', 'ufw', 'ntp', 'nano'] }}"
    server_user_home: "{{ server_user_home | default('/home/' + server_user_name) }}"
   when:
    - ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
@@ -48,7 +49,7 @@
 # define Commons CentOS facts
 - name: ({{ ansible_distribution }}) - INIT - Define CentOS facts
   set_fact:
-   _server_packages: "{{ (server_packages | default([])) + ['openssl', 'firewalld', 'ntp'] }}"
+   _server_packages: "{{ (server_packages | default([])) + ['openssl', 'firewalld', 'ntp', 'nano'] }}"
    server_user_home: "{{ server_user_home | default('/home/' + server_user_name) }}"
   when:
    - ansible_distribution == "CentOS" or ansible_distribution == "RedHat"

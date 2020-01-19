@@ -24,3 +24,8 @@
       server_user_autorized_keys: ["security/admin_rsa.pub"]
       server_packages: []
       server_open_ports: ["22"]
+      storage_servers:
+       - host: "e-sds1.kube-cloud.int"
+         adress: "172.16.1.201"
+       - host: "e-sds2.kube-cloud.int"
+         adress: "172.16.1.202"
