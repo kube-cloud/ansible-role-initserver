@@ -23,7 +23,8 @@
       server_user_ssh_private_key: "security/admin_rsa"
       server_user_autorized_keys: ["security/admin_rsa.pub"]
       server_packages: []
-      server_open_ports: ["22"]
+      server_tcp_ports: ["80", "443", "8080", "8443"]
+      server_udp_ports: ["224"]
       storage_servers:
        - host: "e-sds1.kube-cloud.int"
          adress: "172.16.1.201"

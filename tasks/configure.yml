@@ -158,51 +158,33 @@
   # Iterate on Users parameter list
   loop: "{{ server_user_autorized_keys }}"
 
-- name: ({{ ansible_distribution }}) - CONFIGURE - Manage firewall rules for RedHat Family
+- name: ({{ ansible_distribution }}) - CONFIGURE - Manage firewall rules for CentOS6
   block:
 
-    # Close all ports by default
-    - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure that all ports are closed
-      command: firewall-cmd --zone=public --remove-port=all --permanent
-      changed_when: false
-      failed_when: false
+    # Ensure firewalld is not installed
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure firewalld is not installed
+      package:
+        name: firewalld
+        state: absent
 
-    # Open TCP Ports
-    - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure TCP Ports are open
-      firewalld:
-        permanent: true
-        zone: public
-        port: "{{ item }}/tcp"
-        state: enabled
-      loop: "{{ server_tcp_ports }}"
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Initialize iptable Service template
+      template:
+        src: "iptables-config.j2"
+        dest: "/etc/sysconfig/iptables"
 
-    # Open UDP Ports
-    - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure UDP Ports are open"
-      firewalld:
-        permanent: true
-        zone: public
-        port: "{{ item }}/udp"
-        state: enabled
-      loop: "{{ server_udp_ports }}"
-
-    # handlers file for ansible-firewalld
-    - name: firewalld reload
-      command: firewall-cmd --reload
-      changed_when: false
-      failed_when: false
+    # Ensure iptable is enabled
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure iptable is enabled
+      service:
+        name: iptables
+        enabled: true
+        state: started
 
   when:
     - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version|int >= 6
 
 - name: ({{ ansible_distribution }}) - CONFIGURE - Manage firewall rules for Debian Family
   block:
-
-    # Close all ports by default
-    - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure All TCP Ports are closed by default
-      ufw:
-        rule: deny
-        proto: any
-        direction: in
 
     # Open TCP Ports
     - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure TCP Ports are open
@@ -221,6 +203,13 @@
         port: "{{ item }}"
         direction: in
       loop: "{{ server_udp_ports }}"
+
+    # Close all ports by default
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure All TCP Ports are closed by default
+      ufw:
+        rule: deny
+        proto: any
+        direction: in
 
     # handlers file for ansible-firewalld
     - name: Firewall rules reload

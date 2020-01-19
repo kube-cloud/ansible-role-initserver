@@ -34,7 +34,7 @@
    server_user_create_home: "{{ server_user_create_home | default(true) }}"
    server_user_shell: "{{ server_user_shell | default('/usr/bin/bash') }}"
    server_user_autorized_keys: "{{ server_user_autorized_keys | default([]) }}"
-   server_tcp_ports: "{{ (server_tcp_ports | default([])) + [22] }}"
+   server_tcp_ports: "{{ (server_tcp_ports | default([])) + ['22'] }}"
    server_udp_ports: "{{ server_udp_ports | default([]) }}"
    storage_servers: "{{ storage_servers | default([]) }}"
 
@@ -44,23 +44,27 @@
    _server_packages: "{{ (server_packages | default([])) + ['openssl', 'ufw', 'ntp', 'nano'] }}"
    server_user_home: "{{ server_user_home | default('/home/' + server_user_name) }}"
   when:
-   - ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
+   - ansible_os_family == "Debian"
 
 # define Commons CentOS facts
-- name: ({{ ansible_distribution }}) - INIT - Define CentOS facts
+- name: ({{ ansible_distribution }}) - INIT - Define RedHat/CentOS 6 facts
   set_fact:
-   _server_packages: "{{ (server_packages | default([])) + ['openssl', 'firewalld', 'ntp', 'nano'] }}"
+   _server_packages: "{{ (server_packages | default([])) + ['which', 'mlocate', 'openssl', 'iptables', \
+   'ntp', 'nano'] }}"
    server_user_home: "{{ server_user_home | default('/home/' + server_user_name) }}"
   when:
-   - ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
+   - ansible_os_family == "RedHat"
+   - ansible_distribution_major_version|int == 6
 
-# define Commons Fedora facts
-- name: ({{ ansible_distribution }}) - INIT - Define fedora facts
+# define Commons CentOS facts
+- name: ({{ ansible_distribution }}) - INIT - Define RedHat/CentOS 7+ facts
   set_fact:
-   server_packages: "{{ (server_packages | default([])) + ['openssl'] }}"
+   _server_packages: "{{ (server_packages | default([])) + ['which', 'mlocate', 'openssl', 'iptables-services', \
+   'ntp', 'nano'] }}"
    server_user_home: "{{ server_user_home | default('/home/' + server_user_name) }}"
   when:
-   - ansible_distribution == "Fedora"
+   - ansible_os_family == "RedHat"
+   - ansible_distribution_major_version|int > 6
 
 # define Commons Fedora facts
 - name: ({{ ansible_distribution }}) - INIT - Define Server directories
