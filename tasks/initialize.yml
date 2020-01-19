@@ -34,11 +34,14 @@
    server_user_create_home: "{{ server_user_create_home | default(true) }}"
    server_user_shell: "{{ server_user_shell | default('/usr/bin/bash') }}"
    server_user_autorized_keys: "{{ server_user_autorized_keys | default([]) }}"
+   server_tcp_ports: "{{ (server_tcp_ports | default([])) + [22] }}"
+   server_udp_ports: "{{ server_udp_ports | default([]) }}"
 
 # define Commons ubuntu facts
 - name: ({{ ansible_distribution }}) - INIT - Define Ubuntu facts
   set_fact:
    server_packages: "{{ (server_packages | default([])) + ['openssl'] }}"
+   server_user_home: "{{ server_user_home | default('/home/' + server_user_name) }}"
   when:
    - ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
 
@@ -46,6 +49,7 @@
 - name: ({{ ansible_distribution }}) - INIT - Define CentOS facts
   set_fact:
    server_packages: "{{ (server_packages | default([])) + ['openssl'] }}"
+   server_user_home: "{{ server_user_home | default('/home/' + server_user_name) }}"
   when:
    - ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
 
@@ -53,6 +57,7 @@
 - name: ({{ ansible_distribution }}) - INIT - Define fedora facts
   set_fact:
    server_packages: "{{ (server_packages | default([])) + ['openssl'] }}"
+   server_user_home: "{{ server_user_home | default('/home/' + server_user_name) }}"
   when:
    - ansible_distribution == "Fedora"
 
@@ -60,7 +65,7 @@
 - name: ({{ ansible_distribution }}) - INIT - Define Server directories
   set_fact:
    server_directories:
-    - "/home/{{ server_user_name }}/.ssh"
+    - "{{ server_user_home }}/.ssh"
     - "{{ _server_app_home }}"
     - "{{ _server_app_home }}/{{ server_app_code }}"
     - "{{ _server_app_home }}/{{ server_app_code }}/{{ server_app_logs }}"
@@ -70,3 +75,20 @@
     - "{{ _server_app_home }}/{{ server_app_code }}/{{ server_app_delivery }}"
     - "{{ _server_app_home }}/{{ server_app_code }}/{{ server_app_datas }}"
     - "{{ _server_app_home }}/{{ server_app_code }}/{{ server_app_tmp }}"
+   server_environments:
+    - env: "APP_HOME"
+      path: "{{ _server_app_home }}/{{ server_app_code }}"
+    - env: "APP_LOG"
+      path: "{{ _server_app_home }}/{{ server_app_code }}/{{ server_app_logs }}"
+    - env: "APP_CONF"
+      path: "{{ _server_app_home }}/{{ server_app_code }}/{{ server_app_configuration }}"
+    - env: "APP_SECURITY"
+      path: "{{ _server_app_home }}/{{ server_app_code }}/{{ server_app_security }}"
+    - env: "APP_SCRIPTS"
+      path: "{{ _server_app_home }}/{{ server_app_code }}/{{ server_app_scripts }}"
+    - env: "APP_DELIVERY"
+      path: "{{ _server_app_home }}/{{ server_app_code }}/{{ server_app_delivery }}"
+    - env: "APP_DATAS"
+      path: "{{ _server_app_home }}/{{ server_app_code }}/{{ server_app_datas }}"
+    - env: "APP_TEMP"
+      path: "{{ _server_app_home }}/{{ server_app_code }}/{{ server_app_tmp }}"

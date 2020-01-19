@@ -1,7 +1,7 @@
 ---
 
 # Install Generate Password
-- name: "Generate User Password Encrypted"
+- name: ({{ ansible_distribution }}) - CONFIGURE - Generate User Password Encrypted
 
   # Shell task
   shell:
@@ -17,7 +17,7 @@
   failed_when: false
 
 # Create custom groups
-- name: "Ensure user specific groups are created"
+- name: ({{ ansible_distribution }}) - CONFIGURE - Ensure user specific groups are created
 
   # Group Task
   group:
@@ -32,7 +32,7 @@
   loop: "{{ server_user_groups }}"
 
 # Create custom users
-- name: "Ensure Server specific user are created"
+- name: ({{ ansible_distribution }}) - CONFIGURE - Ensure Server specific user are created
 
   # User Task
   user:
@@ -49,6 +49,9 @@
     # User Create home
     create_home: "{{ server_user_create_home }}"
 
+    # Home directory
+    home: "{{ server_user_home }}"
+
     # User group array joined with "," separator
     groups: "{{ server_user_groups | join(',') }}"
 
@@ -59,7 +62,7 @@
     state: present
 
 # Ensure required directories are created
-- name: "Ensure required directories are created"
+- name: ({{ ansible_distribution }}) - CONFIGURE - Ensure required directories are created
 
   # File task
   file:
@@ -81,7 +84,7 @@
 
   loop: "{{ server_directories }}"
 
-- name: "Ensure environment variables are defined"
+- name: ({{ ansible_distribution }}) - CONFIGURE - Ensure environment variables are defined
 
   # Line in file Task
   lineinfile:
@@ -90,15 +93,15 @@
     dest: "/etc/environment"
 
     # Line to add
-    line: "{{ item }}"
+    line: "{{ item.env }}={{ item.path }}"
 
     # State
     state: present
 
-  loop: "{{ server_directories }}"
+  loop: "{{ server_environments }}"
 
 # Copy ssh private key to the user ssh dir
-- name: "Ensure Custom keys are added to users"
+- name: ({{ ansible_distribution }}) - CONFIGURE - Ensure Custom keys are added to users
 
   # Copy key module
   copy:
@@ -107,7 +110,7 @@
     src: "{{ server_user_ssh_private_key }}"
 
     # destination
-    dest: "/home/{{ server_user_name }}/.ssh/id_rsa"
+    dest: "{{ server_user_home }}/.ssh/id_rsa"
 
     # Owner
     owner: "{{ server_user_name }}"
@@ -119,7 +122,7 @@
     mode: u+rwx,g-rwx,o-rwx
 
 # Add Authorized keys to the custom created users
-- name: "Ensure Custom autorized keys are added to users"
+- name: ({{ ansible_distribution }}) - CONFIGURE - Ensure Custom autorized keys are added to users
 
   # Authorized key module
   authorized_key:
@@ -135,3 +138,39 @@
 
   # Iterate on Users parameter list
   loop: "{{ server_user_autorized_keys }}"
+
+- name: ({{ ansible_distribution }}) - CONFIGURE - Manage firewall rules for RedHat Family
+  block:
+
+    # Close all ports by default
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure that all ports are closed
+      command: firewall-cmd --zone=public --remove-port=all --permanent
+      changed_when: false
+      failed_when: false
+
+    # Open TCP Ports
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure TCP Ports are open
+      firewalld:
+        permanent: true
+        zone: public
+        port: "{{ item }}/tcp"
+        state: enabled
+      loop: "{{ server_tcp_ports }}"
+
+    # Open UDP Ports
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure UDP Ports are open"
+      firewalld:
+        permanent: true
+        zone: public
+        port: "{{ item }}/udp"
+        state: enabled
+      loop: "{{ server_udp_ports }}"
+
+    # handlers file for ansible-firewalld
+    - name: firewalld reload
+      command: firewall-cmd --reload
+      changed_when: false
+      failed_when: false
+
+  when:
+    - ansible_os_family == "RedHat" or - ansible_os_family == "Debian"

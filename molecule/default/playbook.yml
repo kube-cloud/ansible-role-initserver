@@ -22,4 +22,5 @@
       server_user_shell: "/usr/bin/bash"
       server_user_ssh_private_key: "security/admin_rsa"
       server_user_autorized_keys: ["security/admin_rsa.pub"]
-      server_packages: ["iptables", "firewalld", "gluster"]
+      server_packages: ["iptables", "firewalld"]
+      server_open_ports: ["22"]
