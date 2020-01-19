@@ -19,8 +19,8 @@
       server_user_password: "admin123"
       server_user_groups: ["kis", "sudo", "adm", "exploit"]
       server_user_create_home: true
-      server_user_shell: "/usr/bin/bash"
+      server_user_shell: "/bin/bash"
       server_user_ssh_private_key: "security/admin_rsa"
       server_user_autorized_keys: ["security/admin_rsa.pub"]
-      server_packages: ["iptables", "firewalld"]
+      server_packages: []
       server_open_ports: ["22"]

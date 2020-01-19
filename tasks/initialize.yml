@@ -40,7 +40,7 @@
 # define Commons ubuntu facts
 - name: ({{ ansible_distribution }}) - INIT - Define Ubuntu facts
   set_fact:
-   server_packages: "{{ (server_packages | default([])) + ['openssl'] }}"
+   _server_packages: "{{ (server_packages | default([])) + ['openssl', 'ufw', 'ntp'] }}"
    server_user_home: "{{ server_user_home | default('/home/' + server_user_name) }}"
   when:
    - ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
@@ -48,7 +48,7 @@
 # define Commons CentOS facts
 - name: ({{ ansible_distribution }}) - INIT - Define CentOS facts
   set_fact:
-   server_packages: "{{ (server_packages | default([])) + ['openssl'] }}"
+   _server_packages: "{{ (server_packages | default([])) + ['openssl', 'firewalld', 'ntp'] }}"
    server_user_home: "{{ server_user_home | default('/home/' + server_user_name) }}"
   when:
    - ansible_distribution == "CentOS" or ansible_distribution == "RedHat"

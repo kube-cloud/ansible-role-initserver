@@ -5,6 +5,6 @@
   package:
    name: "{{ item }}"
    state: present
-  loop: "{{ server_packages }}"
+  loop: "{{ _server_packages }}"
   when:
    - item != "firewalld" or ansible_distribution != "CentOS" or ansible_distribution_major_version|int > 6
