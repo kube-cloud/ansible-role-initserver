@@ -173,4 +173,4 @@
       failed_when: false
 
   when:
-    - ansible_os_family == "RedHat" or - ansible_os_family == "Debian"
+    - ansible_os_family == "RedHat" or ansible_os_family == "Debian"
