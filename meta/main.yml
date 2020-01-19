@@ -23,5 +23,4 @@ galaxy_info:
         - linux
         - initialization
 
-dependencies:
-    - jetune.glusterfs_client
+dependencies: []
