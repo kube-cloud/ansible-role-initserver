@@ -41,7 +41,7 @@
 # define Commons ubuntu facts
 - name: ({{ ansible_distribution }}) - INIT - Define Ubuntu facts
   set_fact:
-   _server_packages: "{{ (server_packages | default([])) + ['openssl', 'ufw', 'ntp', 'nano'] }}"
+   _server_packages: "{{ (server_packages | default([])) + ['kmod', 'openssl', 'ufw', 'ntp', 'nano'] }}"
    server_user_home: "{{ server_user_home | default('/home/' + server_user_name) }}"
   when:
    - ansible_os_family == "Debian"
