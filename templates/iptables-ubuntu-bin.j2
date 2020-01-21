@@ -1,7 +1,8 @@
 #!/bin/sh -e
 ### BEGIN INIT INFO
 # Provides:          iptables
-# Required-Start:    mountvirtfs ifupdown $local_fs
+# Required-Start:    ifupdown $local_fs
+# Required-Stop:     $local_fs
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 6
 ### END INIT INFO
