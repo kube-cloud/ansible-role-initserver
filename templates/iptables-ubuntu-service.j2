@@ -1,0 +1,14 @@
+[Unit]
+Description=IPTables Service descriptor
+After=network.target
+ 
+[Service]
+Type=simple
+RemainAfterExit=yes
+User=root
+ExecStart={{ iptables_service_bin_file }} start
+ExecStop={{ iptables_service_bin_file }} stop
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

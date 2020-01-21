@@ -167,10 +167,10 @@
         name: firewalld
         state: absent
 
-    - name: ({{ ansible_distribution }}) - CONFIGURE - Initialize iptable Service template
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Initialize iptables Service configuration template
       template:
         src: "iptables-config.j2"
-        dest: "/etc/sysconfig/iptables"
+        dest: "{{ iptables_config_file }}"
 
     # Ensure iptable is enabled
     - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure iptable is enabled
@@ -181,42 +181,45 @@
 
   when:
     - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version|int >= 6
 
 - name: ({{ ansible_distribution }}) - CONFIGURE - Manage firewall rules for Debian Family
   block:
 
-    # Open TCP Ports
-    - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure TCP Ports are open
-      ufw:
-        rule: allow
-        proto: tcp
-        port: "{{ item }}"
-        direction: in
-      loop: "{{ server_tcp_ports }}"
+    # Ensure ufw is not installed
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure UFW is not installed
+      package:
+        name: ufw
+        state: absent
 
-    # Open UDP Ports
-    - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure UDP Ports are open"
-      ufw:
-        rule: allow
-        proto: udp
-        port: "{{ item }}"
-        direction: in
-      loop: "{{ server_udp_ports }}"
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Initialize iptable Service bin template
+      template:
+        src: "iptables-ubuntu-bin.j2"
+        dest: "{{ iptables_service_bin_file }}"
+        mode: a=rwx
+      changed_when: false
+      failed_when: false
 
-    # Close all ports by default
-    - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure All TCP Ports are closed by default
-      ufw:
-        rule: deny
-        proto: any
-        direction: in
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Initialize iptable Service template
+      template:
+        src: "iptables-ubuntu-service.j2"
+        dest: "{{ iptables_service_file }}"
+        mode: u+rw,g+r-w,o+r-w
+      changed_when: false
+      failed_when: false
 
-    # handlers file for ansible-firewalld
-    - name: Firewall rules reload
-      ufw:
-        state: enabled
-        logging: "low"
-        log: true
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Initialize iptable Service configuration template
+      template:
+        src: "iptables-config.j2"
+        dest: "{{ iptables_config_file }}"
+      changed_when: false
+      failed_when: false
+
+    # Ensure iptable is enabled
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure iptable is enabled
+      service:
+        name: iptables
+        enabled: true
+        state: started
 
   when:
     - ansible_os_family == "Debian"

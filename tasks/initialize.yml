@@ -41,8 +41,12 @@
 # define Commons ubuntu facts
 - name: ({{ ansible_distribution }}) - INIT - Define Ubuntu facts
   set_fact:
-   _server_packages: "{{ (server_packages | default([])) + ['kmod', 'openssl', 'ufw', 'ntp', 'nano'] }}"
+   _server_packages: "{{ (server_packages | default([])) + ['mlocate', 'openssl', 'iptables', \
+   'ntp', 'nano'] }}"
    server_user_home: "{{ server_user_home | default('/home/' + server_user_name) }}"
+   iptables_config_file: "{{ iptables_config_file | default('/etc/iptables.conf') }}"
+   iptables_service_bin_file: "{{ iptables_service_bin_file | default('/etc/init.d/iptables') }}"
+   iptables_service_file: "{{ iptables_service_file | default('/lib/systemd/system/iptables.service') }}"
   when:
    - ansible_os_family == "Debian"
 
@@ -52,6 +56,7 @@
    _server_packages: "{{ (server_packages | default([])) + ['which', 'mlocate', 'openssl', 'iptables', \
    'ntp', 'nano'] }}"
    server_user_home: "{{ server_user_home | default('/home/' + server_user_name) }}"
+   iptables_config_file: "{{ iptables_config_file | default('/etc/sysconfig/iptables') }}"
   when:
    - ansible_os_family == "RedHat"
    - ansible_distribution_major_version|int == 6
@@ -62,6 +67,7 @@
    _server_packages: "{{ (server_packages | default([])) + ['which', 'mlocate', 'openssl', 'iptables-services', \
    'ntp', 'nano'] }}"
    server_user_home: "{{ server_user_home | default('/home/' + server_user_name) }}"
+   iptables_config_file: "{{ iptables_config_file | default('/etc/sysconfig/iptables') }}"
   when:
    - ansible_os_family == "RedHat"
    - ansible_distribution_major_version|int > 6
