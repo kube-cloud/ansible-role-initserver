@@ -25,6 +25,7 @@
       server_packages: []
       server_tcp_ports: ["80", "443", "8080", "8443"]
       server_udp_ports: ["224"]
+      firewall_track_conn: false
       storage_servers:
        - host: "e-sds1.kube-cloud.int"
          adress: "172.16.1.201"

@@ -37,6 +37,7 @@
    server_tcp_ports: "{{ (server_tcp_ports | default([])) + ['22'] }}"
    server_udp_ports: "{{ server_udp_ports | default([]) }}"
    storage_servers: "{{ storage_servers | default([]) }}"
+   firewall_track_conn: "{{ firewall_track_conn | default(true) }}"
 
 # define Commons ubuntu facts
 - name: ({{ ansible_distribution }}) - INIT - Define Ubuntu facts

@@ -191,7 +191,7 @@
         name: ufw
         state: absent
 
-    - name: ({{ ansible_distribution }}) - CONFIGURE - Initialize iptable Service bin template
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Initialize iptables Service bin template
       template:
         src: "iptables-ubuntu-bin.j2"
         dest: "{{ iptables_service_bin_file }}"
@@ -199,7 +199,7 @@
       changed_when: false
       failed_when: false
 
-    - name: ({{ ansible_distribution }}) - CONFIGURE - Initialize iptable Service template
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Initialize iptables Service template
       template:
         src: "iptables-ubuntu-service.j2"
         dest: "{{ iptables_service_file }}"
@@ -207,12 +207,23 @@
       changed_when: false
       failed_when: false
 
-    - name: ({{ ansible_distribution }}) - CONFIGURE - Initialize iptable Service configuration template
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Initialize iptables (ConnTrack) Service configuration template
+      template:
+        src: "iptables-config-with-conntrack.j2"
+        dest: "{{ iptables_config_file }}"
+      changed_when: false
+      failed_when: false
+      when:
+        - firewall_track_conn
+
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Initialize iptables Service configuration template
       template:
         src: "iptables-config.j2"
         dest: "{{ iptables_config_file }}"
       changed_when: false
       failed_when: false
+      when:
+        - not firewall_track_conn
 
     # Ensure iptable is enabled
     - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure iptable is enabled
