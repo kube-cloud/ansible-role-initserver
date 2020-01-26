@@ -157,3 +157,69 @@
 
   # Iterate on Users parameter list
   loop: "{{ server_user_autorized_keys }}"
+
+- name: ({{ ansible_distribution }}) - CONFIGURE - Manage firewall rules for CentOS6
+  block:
+
+    # Ensure firewalld is not installed
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure firewalld is not installed
+      package:
+        name: firewalld
+        state: absent
+
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Initialize iptables Service configuration template
+      template:
+        src: "iptables-config.j2"
+        dest: "{{ iptables_config_file }}"
+
+    # Ensure iptable is enabled
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure iptable is enabled
+      service:
+        name: iptables
+        enabled: true
+        state: started
+
+  when:
+    - ansible_os_family == "RedHat"
+
+- name: ({{ ansible_distribution }}) - CONFIGURE - Manage firewall rules for Debian Family
+  block:
+
+    # Ensure ufw is not installed
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure UFW is not installed
+      package:
+        name: ufw
+        state: absent
+
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Initialize iptable Service bin template
+      template:
+        src: "iptables-ubuntu-bin.j2"
+        dest: "{{ iptables_service_bin_file }}"
+        mode: a=rwx
+      changed_when: false
+      failed_when: false
+
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Initialize iptable Service template
+      template:
+        src: "iptables-ubuntu-service.j2"
+        dest: "{{ iptables_service_file }}"
+        mode: u+rw,g+r-w,o+r-w
+      changed_when: false
+      failed_when: false
+
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Initialize iptable Service configuration template
+      template:
+        src: "iptables-config.j2"
+        dest: "{{ iptables_config_file }}"
+      changed_when: false
+      failed_when: false
+
+    # Ensure iptable is enabled
+    - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure iptable is enabled
+      service:
+        name: iptables
+        enabled: true
+        state: started
+
+  when:
+    - ansible_os_family == "Debian"
