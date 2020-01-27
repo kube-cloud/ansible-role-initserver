@@ -8,7 +8,8 @@
 {% endfor %}
 {% for udp_port in server_udp_ports %}
 -A INPUT -p udp --dport {{ udp_port }} -j ACCEPT 
-{% endfor %}
--A INPUT -p icmp -j ACCEPT 
--I INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT 
+{% endfor %} 
+-A INPUT -i lo -j ACCEPT
+-A INPUT -p icmp -j ACCEPT
+-I INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 COMMIT
