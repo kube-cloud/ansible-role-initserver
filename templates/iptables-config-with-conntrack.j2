@@ -10,5 +10,5 @@
 -A INPUT -p udp --dport {{ udp_port }} -j ACCEPT 
 {% endfor %}
 -A INPUT -p icmp -j ACCEPT 
--A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT 
+-I INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT 
 COMMIT
