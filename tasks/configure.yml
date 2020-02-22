@@ -10,9 +10,6 @@
     state: present
   with_items: "{{ storage_servers }}"
 
-  # Register result
-  register: encrypted_password_result
-
   # Change state
   changed_when: false
 
