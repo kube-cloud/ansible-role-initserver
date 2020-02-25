@@ -3,11 +3,11 @@
 :INPUT DROP [0:0]
 :FORWARD ACCEPT [0:0]
 :OUTPUT ACCEPT [0:0]
-{% for tcp_port in server_tcp_ports -%}
--A INPUT -p tcp --dport {{ tcp_port }} -j ACCEPT 
+{%- for tcp_port in server_tcp_ports %}
+-A INPUT -p tcp --dport {{ tcp_port }} -j ACCEPT
 {%- endfor %}
-{% for udp_port in server_udp_ports -%}
--A INPUT -p udp --dport {{ udp_port }} -j ACCEPT 
+{%- for udp_port in server_udp_ports %}
+-A INPUT -p udp --dport {{ udp_port }} -j ACCEPT
 {%- endfor %}
 -A INPUT -i lo -j ACCEPT
 -A INPUT -p icmp -j ACCEPT 
