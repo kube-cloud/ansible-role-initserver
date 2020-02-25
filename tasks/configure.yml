@@ -169,8 +169,8 @@
       -A INPUT -p icmp -j ACCEPT
       COMMIT
     state: present
-  changed_when: false
-  failed_when: false
+  tags:
+    - molecule-idempotence-notest
 
 # Insert Coontrack ESTABLISHED/RELATED State Accepting
 - name: ({{ ansible_distribution }}) - CONFIGURE - Insert ESTABLISHED/RELATED State ({{ iptables_config_file }})
@@ -180,11 +180,10 @@
     insertbefore: "COMMIT"
     line: "-I INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT"
     state: present
-  loop: "{{ server_udp_ports }}"
-  changed_when: false
-  failed_when: false
   when:
     - firewall_track_conn|bool
+  tags:
+    - molecule-idempotence-notest
 
 # Insert UDP Ports in iptable config
 - name: ({{ ansible_distribution }}) - CONFIGURE - Insert UDP Ports in iptable config ({{ iptables_config_file }})
@@ -195,8 +194,8 @@
     line: "-A INPUT -p udp --dport {{ item }} -j ACCEPT"
     state: present
   loop: "{{ server_udp_ports }}"
-  changed_when: false
-  failed_when: false
+  tags:
+    - molecule-idempotence-notest
 
 # Insert TCP Ports in iptable config
 - name: ({{ ansible_distribution }}) - CONFIGURE - Insert TCP Ports in iptable config ({{ iptables_config_file }})
@@ -207,8 +206,8 @@
     line: "-A INPUT -p tcp --dport {{ item }} -j ACCEPT"
     state: present
   loop: "{{ server_tcp_ports }}"
-  changed_when: false
-  failed_when: false
+  tags:
+    - molecule-idempotence-notest
 
 - name: ({{ ansible_distribution }}) - CONFIGURE - Manage firewall rules for CentOS6
   block:
@@ -236,16 +235,16 @@
         src: "iptables-ubuntu-bin.j2"
         dest: "{{ iptables_service_bin_file }}"
         mode: a=rwx
-      changed_when: false
-      failed_when: false
+      tags:
+        - molecule-idempotence-notest
 
     - name: ({{ ansible_distribution }}) - CONFIGURE - Initialize iptables Service template
       template:
         src: "iptables-ubuntu-service.j2"
         dest: "{{ iptables_service_file }}"
         mode: u+rw,g+r-w,o+r-w
-      changed_when: false
-      failed_when: false
+      tags:
+        - molecule-idempotence-notest
 
   when:
     - ansible_os_family == "Debian"
