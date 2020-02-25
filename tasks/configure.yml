@@ -179,6 +179,7 @@
     line: "-A INPUT -p tcp --dport {{ item }} -j ACCEPT"
     state: present
   loop: "{{ server_tcp_ports }}"
+  creates: "{{ iptables_config_file }}"
 
 # Insert UDP Ports in iptable config
 - name: ({{ ansible_distribution }}) - CONFIGURE - Insert UDP Ports in iptable config ({{ iptables_config_file }})
@@ -189,6 +190,8 @@
     line: "-A INPUT -p udp --dport {{ item }} -j ACCEPT"
     state: present
   loop: "{{ server_udp_ports }}"
+  changed_when: false
+  failed_when: false
 
 - name: ({{ ansible_distribution }}) - CONFIGURE - Manage firewall rules for CentOS6
   block:
