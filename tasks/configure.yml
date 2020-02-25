@@ -155,6 +155,41 @@
   # Iterate on Users parameter list
   loop: "{{ server_user_autorized_keys }}"
 
+# Generate iptable config file
+- name: ({{ ansible_distribution }}) - CONFIGURE - Gen. iptable config initial content ({{ iptables_config_file }})
+  blockinfile:
+    path: "{{ iptables_config_file }}"
+    create: true
+    block: |
+      *filter
+      :INPUT DROP [0:0]
+      :FORWARD ACCEPT [0:0]
+      :OUTPUT ACCEPT [0:0]
+      -A INPUT -i lo -j ACCEPT
+      -A INPUT -p icmp -j ACCEPT
+      COMMIT
+    state: present
+
+# Insert TCP Ports in iptable config
+- name: ({{ ansible_distribution }}) - CONFIGURE - Insert TCP Ports in iptable config ({{ iptables_config_file }})
+  lineinfile:
+    path: "{{ iptables_config_file }}"
+    regexp: ".*tcp --dport {{ item }}.*"
+    insertafter: ":OUTPUT"
+    line: "-A INPUT -p tcp --dport {{ item }} -j ACCEPT"
+    state: present
+  loop: "{{ server_tcp_ports }}"
+
+# Insert UDP Ports in iptable config
+- name: ({{ ansible_distribution }}) - CONFIGURE - Insert UDP Ports in iptable config ({{ iptables_config_file }})
+  lineinfile:
+    path: "{{ iptables_config_file }}"
+    regexp: ".*udp --dport {{ item }}.*"
+    insertafter: ":OUTPUT"
+    line: "-A INPUT -p udp --dport {{ item }} -j ACCEPT"
+    state: present
+  loop: "{{ server_udp_ports }}"
+
 - name: ({{ ansible_distribution }}) - CONFIGURE - Manage firewall rules for CentOS6
   block:
 
@@ -163,18 +198,6 @@
       package:
         name: firewalld
         state: absent
-
-    - name: ({{ ansible_distribution }}) - CONFIGURE - Initialize iptables Service configuration template
-      template:
-        src: "iptables-config.j2"
-        dest: "{{ iptables_config_file }}"
-
-    # Ensure iptable is enabled
-    - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure iptable is enabled
-      service:
-        name: iptables
-        enabled: true
-        state: started
 
   when:
     - ansible_os_family == "RedHat"
@@ -204,30 +227,12 @@
       changed_when: false
       failed_when: false
 
-    - name: ({{ ansible_distribution }}) - CONFIGURE - Initialize iptables (ConnTrack) Service configuration template
-      template:
-        src: "iptables-config-with-conntrack.j2"
-        dest: "{{ iptables_config_file }}"
-      changed_when: false
-      failed_when: false
-      when:
-        - firewall_track_conn
-
-    - name: ({{ ansible_distribution }}) - CONFIGURE - Initialize iptables Service configuration template
-      template:
-        src: "iptables-config.j2"
-        dest: "{{ iptables_config_file }}"
-      changed_when: false
-      failed_when: false
-      when:
-        - not firewall_track_conn
-
-    # Ensure iptable is enabled
-    - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure iptable is enabled
-      service:
-        name: iptables
-        enabled: true
-        state: started
-
   when:
     - ansible_os_family == "Debian"
+
+# Ensure iptable is enabled
+- name: ({{ ansible_distribution }}) - CONFIGURE - Ensure iptable is enabled
+  service:
+    name: iptables
+    enabled: true
+    state: started
