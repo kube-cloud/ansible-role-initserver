@@ -172,17 +172,19 @@
   changed_when: false
   failed_when: false
 
-# Insert TCP Ports in iptable config
-- name: ({{ ansible_distribution }}) - CONFIGURE - Insert TCP Ports in iptable config ({{ iptables_config_file }})
+# Insert Coontrack ESTABLISHED/RELATED State Accepting
+- name: ({{ ansible_distribution }}) - CONFIGURE - Insert ESTABLISHED/RELATED State ({{ iptables_config_file }})
   lineinfile:
     path: "{{ iptables_config_file }}"
-    regexp: ".*tcp --dport {{ item }}.*"
-    insertafter: ":OUTPUT"
-    line: "-A INPUT -p tcp --dport {{ item }} -j ACCEPT"
+    regexp: ".*--state ESTABLISHED,RELATED.*"
+    insertbefore: "COMMIT"
+    line: "-I INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT"
     state: present
-  loop: "{{ server_tcp_ports }}"
+  loop: "{{ server_udp_ports }}"
   changed_when: false
   failed_when: false
+  when:
+    - firewall_track_conn|bool
 
 # Insert UDP Ports in iptable config
 - name: ({{ ansible_distribution }}) - CONFIGURE - Insert UDP Ports in iptable config ({{ iptables_config_file }})
@@ -193,6 +195,18 @@
     line: "-A INPUT -p udp --dport {{ item }} -j ACCEPT"
     state: present
   loop: "{{ server_udp_ports }}"
+  changed_when: false
+  failed_when: false
+
+# Insert TCP Ports in iptable config
+- name: ({{ ansible_distribution }}) - CONFIGURE - Insert TCP Ports in iptable config ({{ iptables_config_file }})
+  lineinfile:
+    path: "{{ iptables_config_file }}"
+    regexp: ".*tcp --dport {{ item }}.*"
+    insertafter: ":OUTPUT"
+    line: "-A INPUT -p tcp --dport {{ item }} -j ACCEPT"
+    state: present
+  loop: "{{ server_tcp_ports }}"
   changed_when: false
   failed_when: false
 
