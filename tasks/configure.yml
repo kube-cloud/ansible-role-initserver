@@ -169,6 +169,8 @@
       -A INPUT -p icmp -j ACCEPT
       COMMIT
     state: present
+  changed_when: false
+  failed_when: false
 
 # Insert TCP Ports in iptable config
 - name: ({{ ansible_distribution }}) - CONFIGURE - Insert TCP Ports in iptable config ({{ iptables_config_file }})
