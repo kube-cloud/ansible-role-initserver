@@ -121,6 +121,7 @@
     state: present
 
   loop: "{{ server_environments }}"
+  when: "{{ server_environments | length > 0 }}"
 
 # Copy ssh private key to the user ssh dir
 - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure Custom keys are added to users
