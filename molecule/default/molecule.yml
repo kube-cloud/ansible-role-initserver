@@ -35,6 +35,7 @@ scenario:
         - lint
         - dependency
         - syntax
+        - destroy
         - create
         - prepare
         - converge

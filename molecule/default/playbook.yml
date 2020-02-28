@@ -26,6 +26,13 @@
       server_tcp_ports: ["80", "443", "8080", "8443"]
       server_udp_ports: ["224"]
       firewall_track_conn: false
+      server_environments:
+       - key: "MYKEY1"
+         value: "MYVALUE1"
+       - key: "MYKEY2"
+         value: "MYVALUE2"
+       - key: "MYKEY3"
+         value: "MYVALUE3"
       storage_servers:
        - host: "e-sds1.kube-cloud.int"
          adress: "172.16.1.201"

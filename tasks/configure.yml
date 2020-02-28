@@ -108,8 +108,14 @@
     # Detsination file
     dest: "/etc/environment"
 
+    # Create file if not exists
+    create: true
+
+    # Expression to locate line
+    regexp: "^{{ item.key }}=.*$"
+
     # Line to add
-    line: "{{ item.env }}={{ item.path }}"
+    line: "{{ item.key }}={{ item.value }}"
 
     # State
     state: present
