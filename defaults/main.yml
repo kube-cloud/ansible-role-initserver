@@ -1,1 +1,22 @@
 ---
+
+# Default system environment variables
+server_environments: []
+
+# Default Glusterfs Storage servers
+storage_servers: []
+
+# default server user groups
+server_user_groups: []
+
+# Default server directories
+server_directories: []
+
+# default user authrorized keys
+server_user_autorized_keys: []
+
+# Default UDP Ports
+server_udp_ports: []
+
+# Default TCP Ports
+server_tcp_ports: []
