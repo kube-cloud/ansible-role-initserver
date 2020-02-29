@@ -9,6 +9,7 @@
     line: "{{ item.adress }} {{ item.host }}"
     state: present
   with_items: "{{ storage_servers }}"
+  when: "{{ storage_servers | length > 0 }}"
 
   # Change state
   changed_when: false
