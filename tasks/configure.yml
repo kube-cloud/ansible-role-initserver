@@ -1,21 +1,4 @@
 ---
-# Install Generate Password
-- name: ({{ ansible_distribution }}) - CONFIGURE - Ensure Storage servers hostname are registered in /etc/hosts
-
-  # Shell task
-  lineinfile:
-    dest: "/etc/hosts"
-    regexp: ".*{{ item.host }}.*$"
-    line: "{{ item.adress }} {{ item.host }}"
-    state: present
-  with_items: "{{ storage_servers }}"
-  when: "{{ storage_servers | length > 0 }}"
-
-  # Change state
-  changed_when: false
-
-  # Failed state
-  failed_when: false
 
 # Install Generate Password
 - name: ({{ ansible_distribution }}) - CONFIGURE - Generate User Password Encrypted
