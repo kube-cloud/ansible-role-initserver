@@ -20,6 +20,7 @@
    server_password_auth: "{{ server_password_auth | default(true) }}"
    server_app_description: "{{ server_app_description | default('KubeCloud Application description') }}"
    _server_app_home: "{{ (server_app_home | default('/kubecloud/appli/')) | regex_replace('\\/$', '') }}"
+   _server_backup_home: "{{ (server_backup_home | default('/backups')) | regex_replace('\\/$', '') }}"
    server_app_logs: "logs"
    server_app_configuration: "configuration"
    server_app_security: "security"
@@ -87,6 +88,7 @@
     - "{{ _server_app_home }}/{{ server_app_code }}/{{ server_app_delivery }}"
     - "{{ _server_app_home }}/{{ server_app_code }}/{{ server_app_datas }}"
     - "{{ _server_app_home }}/{{ server_app_code }}/{{ server_app_tmp }}"
+    - "{{ _server_backup_home }}"
    server_environments:
     - env: "APP_HOME"
       path: "{{ _server_app_home }}/{{ server_app_code }}"
