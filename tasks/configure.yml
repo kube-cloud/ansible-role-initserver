@@ -163,6 +163,8 @@
     state: present
   tags:
     - molecule-idempotence-notest
+  when:
+    - server_firewall_enabled|bool
 
 # Insert Coontrack ESTABLISHED/RELATED State Accepting
 - name: ({{ ansible_distribution }}) - CONFIGURE - Insert ESTABLISHED/RELATED State ({{ iptables_config_file }})
@@ -174,6 +176,7 @@
     state: present
   when:
     - firewall_track_conn|bool
+    - server_firewall_enabled|bool
   tags:
     - molecule-idempotence-notest
 
@@ -188,6 +191,8 @@
   loop: "{{ server_udp_ports }}"
   tags:
     - molecule-idempotence-notest
+  when:
+    - server_firewall_enabled|bool
 
 # Insert TCP Ports in iptable config
 - name: ({{ ansible_distribution }}) - CONFIGURE - Insert TCP Ports in iptable config ({{ iptables_config_file }})
@@ -200,6 +205,8 @@
   loop: "{{ server_tcp_ports }}"
   tags:
     - molecule-idempotence-notest
+  when:
+    - server_firewall_enabled|bool
 
 - name: ({{ ansible_distribution }}) - CONFIGURE - Manage firewall rules for CentOS6
   block:
@@ -212,6 +219,7 @@
 
   when:
     - ansible_os_family == "RedHat"
+    - server_firewall_enabled|bool
 
 - name: ({{ ansible_distribution }}) - CONFIGURE - Manage firewall rules for Debian Family
   block:
@@ -240,6 +248,7 @@
 
   when:
     - ansible_os_family == "Debian"
+    - server_firewall_enabled|bool
 
 # Ensure iptable is enabled
 - name: ({{ ansible_distribution }}) - CONFIGURE - Ensure iptable is enabled
@@ -247,3 +256,5 @@
     name: iptables
     enabled: true
     state: started
+  when:
+    - server_firewall_enabled|bool

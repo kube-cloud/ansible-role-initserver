@@ -15,6 +15,9 @@ server_directories: []
 # default user authrorized keys
 server_user_autorized_keys: []
 
+# Enable firewall configuration
+server_firewall_enabled: true
+
 # Default UDP Ports
 server_udp_ports: []
 
