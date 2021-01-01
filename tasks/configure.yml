@@ -144,7 +144,7 @@
     state: present
 
   # Iterate on Users parameter list
-  loop: "{{ server_user_autorized_keys }}"
+  loop: "{{ lookup('fileglob', server_user_autorized_keys, wantlist=True) }}"
 
 # Generate iptable config file
 - name: ({{ ansible_distribution }}) - CONFIGURE - Gen. iptable config initial content ({{ iptables_config_file }})
