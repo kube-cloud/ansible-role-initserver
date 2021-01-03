@@ -23,3 +23,6 @@ server_udp_ports: []
 
 # Default TCP Ports
 server_tcp_ports: []
+
+# Default Timezone
+server_timezone: "Europe/Paris"

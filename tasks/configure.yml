@@ -1,5 +1,10 @@
 ---
 
+# Set Time Zone
+- name: set timezone to Asia/Tokyo
+  timezone:
+    name: "{{ server_timezoe }}"
+
 # Install Generate Password
 - name: ({{ ansible_distribution }}) - CONFIGURE - Generate User Password Encrypted
 
