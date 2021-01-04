@@ -1,7 +1,7 @@
 ---
 
 # Set Time Zone
-- name: set timezone to Asia/Tokyo
+- name: set timezone to {{ server_timezone }}
   timezone:
     name: "{{ server_timezone }}"
 
