@@ -14,29 +14,27 @@ env:
         - ROLE_NAME: initserver
         - AUTHOR: jetune
     matrix:
-        - MOLECULE_DISTRO: centos6
-        - MOLECULE_DISTRO: centos7
-        - MOLECULE_DISTRO: ubuntu16
-        - MOLECULE_DISTRO: ubuntu18
+        - MOLECULE_DISTRO: v1.1.0-centos7-py3
+        - MOLECULE_DISTRO: v1.1.0-xenial-py3
+        - MOLECULE_DISTRO: v1.1.0-bionic-py3
 
 # Before install actions
 before_install:
-    - docker pull kubecloudsas/docker-ansible-test:centos6
-    - docker pull kubecloudsas/docker-ansible-test:centos7
-    - docker pull kubecloudsas/docker-ansible-test:ubuntu16
-    - docker pull kubecloudsas/docker-ansible-test:ubuntu18
+    - docker pull kubecloudsas/docker-ansible-test:v1.1.0-centos7-py3
+    - docker pull kubecloudsas/docker-ansible-test:v1.1.0-xenial-py3
+    - docker pull kubecloudsas/docker-ansible-test:v1.1.0-bionic-py3
 
 # Installation actions
 install:
 
     # Install Test tools
-    - pip install molecule docker molecule-docker flake8
+    - pip3 install molecule docker molecule-docker flake8
 
     # Uninstall testinfra 1.19.0
-    - pip uninstall -y testinfra==1.19.0
+    - pip3 uninstall -y testinfra==1.19.0
 
     # Install testinfra 3.0.5
-    - pip install testinfra==3.0.5
+    - pip3 install testinfra==3.0.5
 
 # Test scripts
 script:
