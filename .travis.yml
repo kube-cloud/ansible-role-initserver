@@ -20,15 +20,13 @@ env:
 
 # Before install actions
 before_install:
-    - docker pull kubecloudsas/docker-ansible-test:v1.1.0-centos7-py3
-    - docker pull kubecloudsas/docker-ansible-test:v1.1.0-xenial-py3
-    - docker pull kubecloudsas/docker-ansible-test:v1.1.0-bionic-py3
+    - sudo docker pull ${MOLECULE_DISTRO}
 
 # Installation actions
 install:
 
     # Install Test tools
-    - pip3 install molecule docker molecule-docker flake8
+    - pip3 install ansible molecule docker molecule-docker flake8
 
     # Uninstall testinfra 1.19.0
     - pip3 uninstall -y testinfra==1.19.0
@@ -38,6 +36,12 @@ install:
 
 # Test scripts
 script:
+
+    # Check ansible version
+    - ansible --version
+
+    # Check ñolecule version
+    - molecule --version
 
     # Run Tests
     - molecule test --all
