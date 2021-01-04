@@ -4,6 +4,8 @@
 - name: set timezone to {{ server_timezone }}
   timezone:
     name: "{{ server_timezone }}"
+  become: yes
+  become_method: sudo
 
 # Install Generate Password
 - name: ({{ ansible_distribution }}) - CONFIGURE - Generate User Password Encrypted

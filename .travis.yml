@@ -27,7 +27,7 @@ before_install:
 
 # Installation actions
 install:
-    - timedatectl list-timezones
+    
     # Install Test tools
     - pip3 install ansible molecule docker molecule-docker flake8
 
